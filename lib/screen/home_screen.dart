@@ -1,9 +1,6 @@
-import 'dart:convert';
-
+import 'package:flutter/material.dart';
 import 'package:currency_converter/model/currency_model.dart';
 import 'package:currency_converter/service/currency_service.dart';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,42 +10,87 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  CurrencyService currencyService = CurrencyService();
-  Future<CurrencyModel?>? _currency;
+  String _selectedCurrency = 'USD';
+  CurrencyModel? _currencyModel;
+  bool _isLoading = false;
 
+  List<String> currencyCodes = [
+    'USD', 'INR', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CNY', 'SGD', 'AED'
+  ];
 
   @override
   void initState() {
     super.initState();
-    _currency = currencyService.fetchCurrency();
+    fetchRates();
+  }
 
+  Future<void> fetchRates() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final model = await CurrencyService().fetchCurrency(base: _selectedCurrency);
+
+    setState(() {
+      _currencyModel = model;
+      _isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:FutureBuilder<CurrencyModel?>(
-        future: _currency,
-        builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting){
-            return CircularProgressIndicator();
-          }else if(snapshot.hasError){
-            return Center(child: Text("Error Found : ${snapshot.hasError}"),);
-          }else if(snapshot.hasData){
-            final currencyData = snapshot.data;
-            final currencyRate = currencyData!.rates;
-            return Center(child: Container(child: Column(
-              children: [
-                Text(currencyRate!.iNR ?? "No Found"),
-                Text(currencyRate!.uSD ?? "No Found"),
-                Text(currencyRate!.aIXBT ?? "No Found"),
-                Text(currencyRate!.aGLD ?? "No Found"),
-              ],
-            ),));
-          }else {
-            return Center(child: Text("No data Found"),);
-          }
-        },
+      appBar: AppBar(
+        title: const Text('Currency Converter'),
+        centerTitle: true,
+        backgroundColor: Colors.deepPurple,
+      ),
+      body: Column(
+        children: [
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: DropdownButtonFormField<String>(
+              decoration: const InputDecoration(
+                labelText: 'Select Base Currency',
+                border: OutlineInputBorder(),
+              ),
+              value: _selectedCurrency,
+              items: currencyCodes.map((String currency) {
+                return DropdownMenuItem<String>(
+                  value: currency,
+                  child: Text(currency),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                if (newValue != null) {
+                  setState(() {
+                    _selectedCurrency = newValue;
+                  });
+                  fetchRates();
+                }
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _currencyModel == null
+                ? const Center(child: Text("No data available"))
+                : ListView.builder(
+              itemCount: _currencyModel!.rates.length,
+              itemBuilder: (context, index) {
+                final entries = _currencyModel!.rates.entries.toList();
+                final rate = entries[index];
+                return ListTile(
+                  title: Text(
+                      '1 ${_currencyModel!.base} = ${rate.value.toStringAsFixed(4)} ${rate.key}'),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
