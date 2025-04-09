@@ -8,6 +8,7 @@ void main() {
 }
 // d7071495860c42308276a120f637a757
 /// website link
+/// https://apilayer.com/marketplace/exchangerates_data-api?e=Sign+Up&l=Success
 /// https://currencyfreaks.com/#documentation
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: CurrencyConverterScreen()
+      home: HomeScreen()
     );
   }
 }

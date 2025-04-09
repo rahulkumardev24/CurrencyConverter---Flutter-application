@@ -9,6 +9,7 @@ class AppConstant {
     return 'https://api.apilayer.com/exchangerates_data/latest?base=$baseCurrency&symbols=$targetCurrency';
   }
 
+
   static const baseUrl = "https://api.currencyfreaks.com/v2.0";
   static const latestRates = "$baseUrl/rates/latest?apikey=$APIKEY";
   static const supportedCurrencies = "$baseUrl/supported-currencies";

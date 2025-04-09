@@ -1,7 +1,10 @@
+import 'package:currency_converter/constant/colors.dart';
+import 'package:currency_converter/utils/custom_text_style.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter/services.dart';
+
+import '../model/currency_converter_model.dart';
+import '../service/currency_service.dart';
 
 class CurrencyConverterScreen extends StatefulWidget {
   const CurrencyConverterScreen({super.key});
@@ -17,15 +20,165 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
   double? convertedAmount;
   bool isLoading = false;
   String errorMessage = '';
-  bool isDarkMode = false;
 
   final TextEditingController amountController = TextEditingController();
+  final CurrencyService _currencyService = CurrencyService();
 
   List<String> currencies = [
-    'USD', 'EUR', 'GBP', 'INR', 'JPY', 'AUD', 'CAD', 'CNY', 'CHF', 'SGD'
+    'USD',
+    'EUR',
+    'GBP',
+    'INR',
+    'JPY',
+    'AUD',
+    'CAD',
+    'CNY',
+    'CHF',
+    'SGD',
+    'AED''AFN',
+    'ALL',
+    'AMD',
+    'ANG',
+    'AOA',
+    'ARS',
+    'AWG',
+    'AZN',
+    'BAM',
+    'BBD',
+    'BDT',
+    'BGN',
+    'BHD',
+    'BIF',
+    'BMD',
+    'BND',
+    'BOB',
+    'BRL',
+    'BSD',
+    'BTN',
+    'BWP',
+    'BYN',
+    'BZD',
+    'CDF',
+    'CLP',
+    'COP',
+    'CRC',
+    'CUP'
+        'CVE',
+    'CZK',
+    'DJF',
+    'DKK',
+    'DOP',
+    'DZD',
+    'EGP',
+    'ERN',
+    'ETB',
+    'FJD',
+    'FKP',
+    'GEL',
+    'GHS',
+    'GIP',
+    'GMD',
+    'GNF',
+    'GTQ',
+    'GYD',
+    'HKD',
+    'HNL',
+    'HRK',
+    'HTG',
+    'HUF',
+    'IDR',
+    'IQD',
+    'IRR',
+    'ISK',
+    'JMD',
+    'JOD',
+    'KES',
+    'KGS',
+    'KHR',
+    'KMF',
+    'KPW',
+    'KRW',
+    'KWD',
+    'KYD',
+    'KZT',
+    'LAK',
+    'LBP',
+    'LKR',
+    'LRD',
+    'LSL',
+    'LYD',
+    'MAD',
+    'MDL',
+    'MGA',
+    'MKD',
+    'MMK',
+    'MNT',
+    'MOP',
+    'MRU',
+    'MUR',
+    'MVR',
+    'MWK',
+    'MXN',
+    'MYR',
+    'MZN',
+    'NAD',
+    'NGN',
+    'NIO',
+    'NOK',
+    'NPR',
+    'NZD',
+    'OMR',
+    'PAB',
+    'PEN',
+    'PGK',
+    'PHP',
+    'PKR',
+    'PLN',
+    'PYG',
+    'QAR',
+    'RON',
+    'RSD',
+    'RUB',
+    'RWF',
+    'SAR',
+    'SBD',
+    'SCR',
+    'SDG',
+    'SEK',
+    'SHP',
+    'SLL',
+    'SOS',
+    'SRD',
+    'STN',
+    'SYP',
+    'SZL',
+    'THB'
+        'TJS',
+    'TMT',
+    'TND',
+    'TOP',
+    'TRY',
+    'TTD',
+    'TWD',
+    'TZS',
+    'UAH',
+    'UGX',
+    'UYU',
+    'UZS',
+    'VES',
+    'VND',
+    'VUV',
+    'WST',
+    'XAF',
+    'XCD',
+    'XOF',
+    'XPF',
+    'YER',
+    'ZAR',
+    'ZMW',
+    'ZWL',
   ];
 
-  // Currency flags mapping (using emoji flags for simplicity)
   final Map<String, String> currencyFlags = {
     'USD': '🇺🇸',
     'EUR': '🇪🇺',
@@ -37,13 +190,154 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
     'CNY': '🇨🇳',
     'CHF': '🇨🇭',
     'SGD': '🇸🇬',
+    'AED': '🇦🇪',
+    'AFN': '🇦🇫',
+    'ALL': '🇦🇱',
+    'AMD': '🇦🇲',
+    'ANG': '🇨🇼',
+    'AOA': '🇦🇴',
+    'ARS': '🇦🇷',
+    'AWG': '🇦🇼',
+    'AZN': '🇦🇿',
+    'BAM': '🇧🇦',
+    'BBD': '🇧🇧',
+    'BDT': '🇧🇩',
+    'BGN': '🇧🇬',
+    'BHD': '🇧🇭',
+    'BIF': '🇧🇮',
+    'BMD': '🇧🇲',
+    'BND': '🇧🇳',
+    'BOB': '🇧🇴',
+    'BRL': '🇧🇷',
+    'BSD': '🇧🇸',
+    'BTN': '🇧🇹',
+    'BWP': '🇧🇼',
+    'BYN': '🇧🇾',
+    'BZD': '🇧🇿',
+    'CDF': '🇨🇩',
+    'CLP': '🇨🇱',
+    'COP': '🇨🇴',
+    'CRC': '🇨🇷',
+    'CUP': '🇨🇺',
+    'CVE': '🇨🇻',
+    'CZK': '🇨🇿',
+    'DJF': '🇩🇯',
+    'DKK': '🇩🇰',
+    'DOP': '🇩🇴',
+    'DZD': '🇩🇿',
+    'EGP': '🇪🇬',
+    'ERN': '🇪🇷',
+    'ETB': '🇪🇹',
+    'FJD': '🇫🇯',
+    'FKP': '🇫🇰',
+    'GEL': '🇬🇪',
+    'GHS': '🇬🇭',
+    'GIP': '🇬🇮',
+    'GMD': '🇬🇲',
+    'GNF': '🇬🇳',
+    'GTQ': '🇬🇹',
+    'GYD': '🇬🇾',
+    'HKD': '🇭🇰',
+    'HNL': '🇭🇳',
+    'HRK': '🇭🇷',
+    'HTG': '🇭🇹',
+    'HUF': '🇭🇺',
+    'IDR': '🇮🇩',
+    'ILS': '🇮🇱',
+    'IQD': '🇮🇶',
+    'IRR': '🇮🇷',
+    'ISK': '🇮🇸',
+    'JMD': '🇯🇲',
+    'JOD': '🇯🇴',
+    'KES': '🇰🇪',
+    'KGS': '🇰🇬',
+    'KHR': '🇰🇭',
+    'KMF': '🇰🇲',
+    'KPW': '🇰🇵',
+    'KRW': '🇰🇷',
+    'KWD': '🇰🇼',
+    'KYD': '🇰🇾',
+    'KZT': '🇰🇿',
+    'LAK': '🇱🇦',
+    'LBP': '🇱🇧',
+    'LKR': '🇱🇰',
+    'LRD': '🇱🇷',
+    'LSL': '🇱🇸',
+    'LYD': '🇱🇾',
+    'MAD': '🇲🇦',
+    'MDL': '🇲🇩',
+    'MGA': '🇲🇬',
+    'MKD': '🇲🇰',
+    'MMK': '🇲🇲',
+    'MNT': '🇲🇳',
+    'MOP': '🇲🇴',
+    'MRU': '🇲🇷',
+    'MUR': '🇲🇺',
+    'MVR': '🇲🇻',
+    'MWK': '🇲🇼',
+    'MXN': '🇲🇽',
+    'MYR': '🇲🇾',
+    'MZN': '🇲🇿',
+    'NAD': '🇳🇦',
+    'NGN': '🇳🇬',
+    'NIO': '🇳🇮',
+    'NOK': '🇳🇴',
+    'NPR': '🇳🇵',
+    'NZD': '🇳🇿',
+    'OMR': '🇴🇲',
+    'PAB': '🇵🇦',
+    'PEN': '🇵🇪',
+    'PGK': '🇵🇬',
+    'PHP': '🇵🇭',
+    'PKR': '🇵🇰',
+    'PLN': '🇵🇱',
+    'PYG': '🇵🇾',
+    'QAR': '🇶🇦',
+    'RON': '🇷🇴',
+    'RSD': '🇷🇸',
+    'RUB': '🇷🇺',
+    'RWF': '🇷🇼',
+    'SAR': '🇸🇦',
+    'SBD': '🇸🇧',
+    'SCR': '🇸🇨',
+    'SDG': '🇸🇩',
+    'SEK': '🇸🇪',
+    'SHP': '🇸🇭',
+    'SLL': '🇸🇱',
+    'SOS': '🇸🇴',
+    'SRD': '🇸🇷',
+    'STN': '🇸🇹',
+    'SYP': '🇸🇾',
+    'SZL': '🇸🇿',
+    'THB': '🇹🇭',
+    'TJS': '🇹🇯',
+    'TMT': '🇹🇲',
+    'TND': '🇹🇳',
+    'TOP': '🇹🇴',
+    'TRY': '🇹🇷',
+    'TTD': '🇹🇹',
+    'TWD': '🇹🇼',
+    'TZS': '🇹🇿',
+    'UAH': '🇺🇦',
+    'UGX': '🇺🇬',
+    'UYU': '🇺🇾',
+    'UZS': '🇺🇿',
+    'VES': '🇻🇪',
+    'VND': '🇻🇳',
+    'VUV': '🇻🇺',
+    'WST': '🇼🇸',
+    'XAF': '🇨🇲',
+    'XCD': '🇦🇬',
+    'XOF': '🇧🇯',
+    'XPF': '🇵🇫',
+    'YER': '🇾🇪',
+    'ZAR': '🇿🇦',
+    'ZMW': '🇿🇲',
+    'ZWL': '🇿🇼',
   };
 
   Future<void> getExchangeRate() async {
-    // Close keyboard if open
     FocusScope.of(context).unfocus();
-
-    // Validate input
     if (amountController.text.isNotEmpty &&
         double.tryParse(amountController.text) == null) {
       setState(() {
@@ -52,47 +346,32 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
       });
       return;
     }
-
     setState(() {
       isLoading = true;
       exchangeRate = null;
       convertedAmount = null;
       errorMessage = '';
     });
-
-    final url = Uri.parse(
-        'https://api.apilayer.com/exchangerates_data/latest?base=$baseCurrency&symbols=$targetCurrency');
-
     try {
-      final response = await http.get(
-        url,
-        headers: {
-          'apikey': 'rSCoN57FlqCCI389W4z28AjBF9SZ8XkJ',
-        },
+      final CurrencyRate currencyRate = await _currencyService.getExchangeRate(
+        baseCurrency: baseCurrency,
+        targetCurrency: targetCurrency,
       );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          exchangeRate = data['rates'][targetCurrency];
-          double amount = double.tryParse(amountController.text) ?? 1.0;
-          convertedAmount = exchangeRate! * amount;
-          isLoading = false;
-        });
-      } else {
-        setState(() {
-          errorMessage = 'Error: ${response.statusCode} - ${response.reasonPhrase}';
-          isLoading = false;
-        });
-      }
+      setState(() {
+        exchangeRate = currencyRate.rates[targetCurrency];
+        double amount = double.tryParse(amountController.text) ?? 1.0;
+        convertedAmount = exchangeRate! * amount;
+        isLoading = false;
+      });
     } catch (e) {
       setState(() {
-        errorMessage = 'Network error: Please check your connection';
+        errorMessage = e.toString().replaceAll('Exception: ', '');
         isLoading = false;
       });
     }
   }
 
+  /// create function for swap the currency
   void swapCurrencies() {
     setState(() {
       final temp = baseCurrency;
@@ -106,82 +385,47 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
     });
   }
 
-  Widget buildCurrencyDropdown(String label, String value, ValueChanged<String?> onChanged) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey[800] : Colors.grey[200],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 14,
-              color: isDarkMode ? Colors.white70 : Colors.grey[700],
-            ),
-          ),
-          DropdownButton<String>(
-            value: value,
-            isExpanded: true,
-            underline: const SizedBox(),
-            icon: Icon(Icons.arrow_drop_down, color: isDarkMode ? Colors.white : Colors.black),
-            style: TextStyle(
-              fontSize: 18,
-              color: isDarkMode ? Colors.white : Colors.black,
-            ),
-            items: currencies.map((String currency) {
-              return DropdownMenuItem<String>(
-                value: currency,
-                child: Row(
-                  children: [
-                    Text(currencyFlags[currency] ?? ''),
-                    const SizedBox(width: 8),
-                    Text(currency),
-                  ],
-                ),
-              );
-            }).toList(),
-            onChanged: onChanged,
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final theme = isDarkMode ? ThemeData.dark() : ThemeData.light();
-
-    return Theme(
-      data: theme.copyWith(
-        colorScheme: theme.colorScheme.copyWith(
-          primary: isDarkMode ? Colors.tealAccent : Colors.teal,
-          secondary: isDarkMode ? Colors.tealAccent[200] : Colors.teal[700],
-        ),
-      ),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Currency Converter'),
-          actions: [
-            IconButton(
-              icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
-              onPressed: () {
-                setState(() {
-                  isDarkMode = !isDarkMode;
-                });
-              },
-            ),
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
+    return Scaffold(
+      /// --- Body ---- ///
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: SingleChildScrollView(
             child: Column(
               children: [
-                // Currency selection cards
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: AppColors.primary,
+
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: AppBar(
+                      title: Text('Currency Converter', style: myTextStyle18(fontColor: Colors.white70)),
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      actions: [
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              amountController.clear();
+                              exchangeRate = null;
+                              convertedAmount = null;
+                              errorMessage = '';
+                            });
+                          },
+                          icon: Icon(Icons.restart_alt_rounded, size: 27 , color: Colors.white54,),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 8,),
+                /// Currency selection cards
                 Card(
                   elevation: 4,
                   shape: RoundedRectangleBorder(
@@ -191,6 +435,7 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
+                        /// from drop down
                         buildCurrencyDropdown('From', baseCurrency, (value) {
                           if (value != null) {
                             setState(() {
@@ -198,19 +443,26 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
                             });
                           }
                         }),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 4),
+
+                        /// --- Swip button --- ///
                         IconButton(
                           icon: Container(
                             decoration: BoxDecoration(
-                              color: isDarkMode ? Colors.tealAccent : Colors.teal,
+                              color: AppColors.primary,
                               shape: BoxShape.circle,
                             ),
                             padding: const EdgeInsets.all(8),
-                            child: const Icon(Icons.swap_vert, color: Colors.white),
+                            child: const Icon(
+                              Icons.swap_vert,
+                              color: Colors.white,
+                            ),
                           ),
                           onPressed: swapCurrencies,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 4),
+
+                        /// to drop down
                         buildCurrencyDropdown('To', targetCurrency, (value) {
                           if (value != null) {
                             setState(() {
@@ -224,50 +476,73 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // Amount input
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [Text("Enter Amount", style: myTextStyle18())],
+                ),
+                SizedBox(height: 6),
+
+                ///  Amount input
                 TextField(
                   controller: amountController,
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                  ],
                   decoration: InputDecoration(
-                    labelText: 'Amount in $baseCurrency',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    labelStyle: myTextStyle18(),
+                    filled: true,
+                    fillColor: AppColors.light.withAlpha(60),
+                    hintText: 'Enter Amount in $baseCurrency',
+                    hintStyle: myTextStyle15(fontColor: Colors.black38),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(width: 1, color: AppColors.light),
+                      borderRadius: BorderRadius.circular(100),
                     ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(width: 1, color: AppColors.light),
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+
                     prefixIcon: const Icon(Icons.monetization_on),
+
+                    /// clear button
                     suffixIcon: IconButton(
-                      icon: const Icon(Icons.clear),
+                      icon:
+                          amountController.text.isNotEmpty
+                              ? Icon(Icons.clear)
+                              : SizedBox(),
                       onPressed: () => amountController.clear(),
                     ),
                   ),
                 ),
                 const SizedBox(height: 24),
 
-                // Convert button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: getExchangeRate,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                /// Convert button
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: getExchangeRate,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        backgroundColor: AppColors.secondary,
                       ),
-                    ),
-                    child: isLoading
-                        ? const SizedBox(
-                      height: 24,
-                      width: 24,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    )
-                        : const Text(
-                      'CONVERT',
-                      style: TextStyle(fontSize: 18),
+                      child:
+                          isLoading
+                              ? const SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : Text(
+                                'CONVERT',
+                                style: myTextStyle18(fontColor: Colors.white),
+                              ),
                     ),
                   ),
                 ),
@@ -294,68 +569,211 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
                       ],
                     ),
                   ),
-
                 if (exchangeRate != null && !isLoading)
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeInOut,
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? Colors.teal.withOpacity(0.2)
-                          : Colors.teal[50],
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: isDarkMode
-                            ? Colors.tealAccent
-                            : Colors.teal,
-                        width: 1,
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          'Exchange Rate',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: isDarkMode ? Colors.white70 : Colors.grey[700],
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 800),
+                    transitionBuilder: (
+                      Widget child,
+                      Animation<double> animation,
+                    ) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(0, 0.2),
+                            end: Offset.zero,
+                          ).animate(
+                            CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.easeOutQuart,
+                            ),
                           ),
+                          child: child,
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '1 $baseCurrency = ${exchangeRate!.toStringAsFixed(4)} $targetCurrency',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const Divider(height: 32),
-                        Text(
-                          'Converted Amount',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: isDarkMode ? Colors.white70 : Colors.grey[700],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '${amountController.text.isEmpty ? "1" : amountController.text} $baseCurrency =',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: isDarkMode ? Colors.white70 : Colors.grey[700],
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '${convertedAmount?.toStringAsFixed(2) ?? "0"} $targetCurrency',
-                          style: TextStyle(
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold,
-                            color: isDarkMode ? Colors.tealAccent : Colors.teal,
-                          ),
-                        ),
-                      ],
-                    ),
+                      );
+                    },
+                    child:
+                        exchangeRate != null
+                            ? Container(
+                              key: ValueKey<double>(convertedAmount ?? 0),
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    AppColors.secondary.withAlpha(30),
+                                    AppColors.primary.withAlpha(60),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: AppColors.primary.withAlpha(30),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  // Exchange Rate Section
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Exchange Rate',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.grey[600],
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.info_outline,
+                                          size: 20,
+                                          color: Colors.grey[600],
+                                        ),
+                                        onPressed: () {
+                                          // Add info dialog or tooltip
+                                        },
+                                      ),
+                                    ],
+                                  ),
+
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 6,
+                                      horizontal: 12,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary.withAlpha(30),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: RichText(
+                                      text: TextSpan(
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                        children: [
+                                          TextSpan(text: '1 '),
+                                          TextSpan(
+                                            text: baseCurrency,
+                                            style: TextStyle(
+                                              color: AppColors.primary,
+                                            ),
+                                          ),
+                                          const TextSpan(text: ' = '),
+                                          TextSpan(
+                                            text: exchangeRate!.toStringAsFixed(
+                                              4,
+                                            ),
+                                            style: const TextStyle(
+                                              color: Colors.teal,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: ' $targetCurrency',
+                                            style: TextStyle(
+                                              color: AppColors.primary,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                  /// Animated divider
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 6,
+                                    ),
+                                    child: TweenAnimationBuilder<double>(
+                                      tween: Tween(begin: 0.0, end: 1.0),
+                                      duration: const Duration(milliseconds: 600),
+                                      curve: Curves.easeOut,
+                                      builder: (context, value, child) {
+                                        return LinearProgressIndicator(
+                                          value: value,
+                                          backgroundColor: Colors.grey[200],
+                                          color: AppColors.primary.withOpacity(
+                                            0.5,
+                                          ),
+                                          minHeight: 2,
+                                        );
+                                      },
+                                    ),
+                                  ),
+
+                                  // Converted Amount Section
+                                  Text(
+                                    'Converted Amount',
+                                    style: myTextStyle15(
+                                      fontColor: Colors.black54,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+
+                                  // Original Amount
+                                  FadeTransition(
+                                    opacity: AlwaysStoppedAnimation(
+                                      amountController.text.isEmpty ? 0.6 : 1.0,
+                                    ),
+                                    child: Text(
+                                      '${amountController.text.isEmpty ? "1" : amountController.text} $baseCurrency',
+                                      style: myTextStyle18(
+                                        fontColor: Colors.black54,
+                                      ),
+                                    ),
+                                  ),
+
+                                  /// Conversion Arrow
+                                  Icon(
+                                    Icons.arrow_downward,
+                                    size: 24,
+                                    color: AppColors.primary.withOpacity(0.7),
+                                  ),
+
+                                  /// Result Amount with scaling animation
+                                  TweenAnimationBuilder<double>(
+                                    tween: Tween(begin: 0.95, end: 1.0),
+                                    duration: const Duration(milliseconds: 400),
+                                    curve: Curves.easeOutBack,
+                                    builder: (context, value, child) {
+                                      return Transform.scale(
+                                        scale: value,
+                                        child: child,
+                                      );
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white24,
+                                      ),
+                                      child: Text(
+                                        '${convertedAmount?.toStringAsFixed(2) ?? "0.00"} $targetCurrency',
+                                        style: myTextStyle24(
+                                          fontWeight: FontWeight.bold,
+                                          fontColor: AppColors.primary,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+                                  // Last updated time
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Updated just now',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontFamily: "primary",
+                                      color: Colors.grey[500],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                            : const SizedBox.shrink(),
                   ),
 
                 // Recent conversions list (placeholder for future enhancement)
@@ -370,18 +788,53 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
             ),
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            setState(() {
-              amountController.clear();
-              exchangeRate = null;
-              convertedAmount = null;
-              errorMessage = '';
-            });
-          },
-          child: const Icon(Icons.refresh),
-          tooltip: 'Reset',
-        ),
+      ),
+    );
+  }
+
+  /// --- Widgets---- ///
+  Widget buildCurrencyDropdown(
+    String label,
+    String value,
+    ValueChanged<String?> onChanged,
+  ) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppColors.light.withAlpha(100),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: myTextStyle15(fontColor: Colors.black45)),
+          DropdownButton<String>(
+            value: value,
+            menuMaxHeight: 400,
+            borderRadius: BorderRadius.circular(12),
+            isExpanded: true,
+            underline: const SizedBox(),
+            icon: Icon(Icons.arrow_drop_down, color: Colors.black54),
+            style: myTextStyle18(),
+            items:
+                currencies.map((String currency) {
+                  return DropdownMenuItem<String>(
+                    value: currency,
+                    child: Row(
+                      children: [
+                        Text(
+                          currencyFlags[currency] ?? '',
+                          style: myTextStyle18(),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(currency, style: myTextStyle18()),
+                      ],
+                    ),
+                  );
+                }).toList(),
+            onChanged: onChanged,
+          ),
+        ],
       ),
     );
   }

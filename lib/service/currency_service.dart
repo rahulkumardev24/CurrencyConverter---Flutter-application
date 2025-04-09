@@ -30,8 +30,6 @@ class CurrencyService {
     }
   }
 
-
-
   Future<SupportedCurrenciesResponse?> supportCurrency() async {
     final url = Uri.parse(AppConstant.supportedCurrencies);
     try {
@@ -56,13 +54,11 @@ class CurrencyService {
     final url = Uri.parse(
       AppConstant.currencyConverterUrl(baseCurrency, targetCurrency),
     );
-
     try {
       final response = await http.get(
         url,
         headers: {'apikey': AppConstant.CURRENCYCONVERTERAPIKEY},
       );
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return CurrencyRate.fromJson(data);
@@ -73,4 +69,36 @@ class CurrencyService {
       throw Exception('Network error: ${e.toString()}');
     }
   }
+
+
+  // For getting all rates for a base currency
+  Future<CurrencyModel> getAllExchangeRates({
+    required String baseCurrency,
+  }) async {
+    final url = Uri.parse(
+      'https://api.apilayer.com/exchangerates_data/latest?base=$baseCurrency',
+    );
+
+    final response = await _makeRequest(url);
+    return CurrencyModel.fromJson(response);
+  }
+
+  // Shared request method
+  Future<Map<String, dynamic>> _makeRequest(Uri url) async {
+    try {
+      final response = await http.get(
+        url,
+        headers: {'apikey': AppConstant.CURRENCYCONVERTERAPIKEY},
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        throw Exception('Failed to load: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Network error: ${e.toString()}');
+    }
+  }
+
 }

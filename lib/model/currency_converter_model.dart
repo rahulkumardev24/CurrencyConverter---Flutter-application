@@ -2,7 +2,7 @@
 class CurrencyRate {
   final String base;
   final DateTime date;
-  final Map<String, double> rates;
+  final Map<String, dynamic> rates;
 
   CurrencyRate({
     required this.base,
@@ -14,17 +14,17 @@ class CurrencyRate {
     return CurrencyRate(
       base: json['base'],
       date: DateTime.parse(json['date']),
-      rates: Map<String, double>.from(json['rates']),
+      rates: Map<String, dynamic>.from(json['rates']),
     );
   }
 }
 
 class CurrencyConversion {
-  final double amount;
+  final dynamic amount;
   final String from;
   final String to;
-  final double rate;
-  final double convertedAmount;
+  final dynamic rate;
+  final dynamic convertedAmount;
   final DateTime date;
 
   CurrencyConversion({
