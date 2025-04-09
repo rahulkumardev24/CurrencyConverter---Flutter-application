@@ -2,14 +2,18 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:currency_converter/constant/urls.dart';
 import 'package:currency_converter/model/currency_model.dart';
-import 'package:currency_converter/model/conversion_model.dart';
+
+
+import '../model/currency_converter_model.dart';
+import '../model/supported_currencies.dart';
 
 class CurrencyService {
   /// 1. Get all latest currency rates by default base or custom base
   Future<CurrencyModel?> fetchCurrency({String? base}) async {
-    final url = base == null
-        ? AppConstant.latestRates
-        : AppConstant.getRatesWithBase(base);
+    final url =
+        base == null
+            ? AppConstant.latestRates
+            : AppConstant.getRatesWithBase(base);
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -26,52 +30,47 @@ class CurrencyService {
     }
   }
 
-  /// 2. Get specific currencies by symbols and base
-  Future<CurrencyModel?> fetchCurrencyBySymbolsAndBase({
-    required List<String> symbols,
-    required String base,
-  }) async {
-    final url = AppConstant.getRatesWithSymbolsAndBase(symbols, base);
 
+
+  Future<SupportedCurrenciesResponse?> supportCurrency() async {
+    final url = Uri.parse(AppConstant.supportedCurrencies);
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(url);
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return CurrencyModel.fromJson(data);
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        return SupportedCurrenciesResponse.fromJson(data);
       } else {
-        print("Failed to fetch by symbols: ${response.statusCode}");
-        return null;
+        print("Failed: ${response.statusCode}");
       }
-    } catch (error) {
-      print("Error fetching by symbols & base: $error");
-      return null;
+    } catch (e) {
+      print("Exception: $e");
     }
+    return null;
   }
 
-  /// 3. Convert from one currency to another
-  Future<ConversionModel?> convertCurrency({
-    required String from,
-    required String to,
-    double amount = 1.0,
+  /// ---- currency change --- ///
+  Future<CurrencyRate> getExchangeRate({
+    required String baseCurrency,
+    required String targetCurrency,
   }) async {
-    final url = AppConstant.convertCurrency(
-      from: from,
-      to: to,
-      amount: amount,
+    final url = Uri.parse(
+      AppConstant.currencyConverterUrl(baseCurrency, targetCurrency),
     );
 
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(
+        url,
+        headers: {'apikey': AppConstant.CURRENCYCONVERTERAPIKEY},
+      );
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return ConversionModel.fromJson(data);
+        return CurrencyRate.fromJson(data);
       } else {
-        print("Failed to convert currency: ${response.statusCode}");
-        return null;
+        throw Exception('Failed to load rates: ${response.statusCode}');
       }
-    } catch (error) {
-      print("Error converting currency: $error");
-      return null;
+    } catch (e) {
+      throw Exception('Network error: ${e.toString()}');
     }
   }
 }

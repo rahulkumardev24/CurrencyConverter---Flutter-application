@@ -10,6 +10,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final CurrencyService currencyService = CurrencyService();
   String _selectedCurrency = 'USD';
   CurrencyModel? _currencyModel;
   bool _isLoading = false;
@@ -29,8 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _isLoading = true;
     });
 
-    final model = await CurrencyService().fetchCurrency(base: _selectedCurrency);
-
+    final model = await currencyService.fetchCurrency(base: _selectedCurrency);
     setState(() {
       _currencyModel = model;
       _isLoading = false;
