@@ -2,6 +2,7 @@ import 'package:currency_converter/screen/currency_converter_screen.dart';
 import 'package:currency_converter/screen/currency_symbole_screen.dart';
 import 'package:currency_converter/screen/dashboard_screen.dart';
 import 'package:currency_converter/screen/home_screen.dart';
+import 'package:currency_converter/screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: DashboardScreen()
+      home: SplashScreen()
     );
   }
 }
