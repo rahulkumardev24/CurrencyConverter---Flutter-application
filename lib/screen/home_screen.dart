@@ -626,7 +626,7 @@ class _HomeScreenState extends State<HomeScreen>
                           child: AppBar(
                             title: Text(
                               'Exchange Rates',
-                              style: myTextStyle18(fontColor: Colors.white70),
+                              style: myTextStyle18(fontColor: Colors.white , fontWeight: FontWeight.bold),
                             ),
                             backgroundColor: Colors.transparent,
                             elevation: 0,

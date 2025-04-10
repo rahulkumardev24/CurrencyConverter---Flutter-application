@@ -35,7 +35,8 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
     'CNY',
     'CHF',
     'SGD',
-    'AED''AFN',
+    'AED'
+        'AFN',
     'ALL',
     'AMD',
     'ANG',
@@ -400,12 +401,17 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: AppColors.primary,
-
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: AppBar(
-                      title: Text('Currency Converter', style: myTextStyle18(fontColor: Colors.white70)),
+                      leading: IconButton(onPressed: (){
+                        Navigator.pop(context);
+                      }, icon: Icon(Icons.arrow_back_ios_rounded) , color: Colors.white70, ),
+                      title: Text(
+                        'Currency Converter',
+                        style: myTextStyle18(fontColor: Colors.white , fontWeight: FontWeight.bold),
+                      ),
                       backgroundColor: Colors.transparent,
                       elevation: 0,
                       actions: [
@@ -418,13 +424,18 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
                               errorMessage = '';
                             });
                           },
-                          icon: Icon(Icons.restart_alt_rounded, size: 27 , color: Colors.white54,),
+                          icon: Icon(
+                            Icons.restart_alt_rounded,
+                            size: 27,
+                            color: Colors.white54,
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(height: 8,),
+                SizedBox(height: 8),
+
                 /// Currency selection cards
                 Card(
                   elevation: 4,
@@ -596,7 +607,9 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
                         exchangeRate != null
                             ? Container(
                               key: ValueKey<double>(convertedAmount ?? 0),
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   begin: Alignment.topLeft,
@@ -691,7 +704,9 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
                                     ),
                                     child: TweenAnimationBuilder<double>(
                                       tween: Tween(begin: 0.0, end: 1.0),
-                                      duration: const Duration(milliseconds: 600),
+                                      duration: const Duration(
+                                        milliseconds: 600,
+                                      ),
                                       curve: Curves.easeOut,
                                       builder: (context, value, child) {
                                         return LinearProgressIndicator(
