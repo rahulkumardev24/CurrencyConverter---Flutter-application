@@ -56,6 +56,9 @@ class _DashboardScreenState extends State<DashboardScreen>
         notchSmoothness: NotchSmoothness.verySmoothEdge,
         leftCornerRadius: 32,
         rightCornerRadius: 32,
+         height: 80,
+         notchMargin: 12.3,
+        borderColor: AppColors.light,
         backgroundColor: AppColors.primary,
         onTap: (index) => setState(() => currentIndex = index),
         // other params

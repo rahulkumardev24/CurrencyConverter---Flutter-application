@@ -15,18 +15,6 @@ class AppConstant {
   static const supportedCurrencies = "$baseUrl/supported-currencies";
 
 
-  /// Get latest currency rates for specific symbols only
-  static String getRatesBySymbols(List<String> symbols) {
-    final joined = symbols.join(',');
-    return "$latestRates&symbols=$joined";
-  }
-
-  /// Get latest currency rates for specific base and selected symbols
-  static String getRatesWithSymbolsAndBase(List<String> symbols, String base) {
-    final joined = symbols.join(',');
-    return "$latestRates&symbols=$joined&base=$base";
-  }
-
   /// Get latest currency rates for all currencies by specific base
   static String getRatesWithBase(String base) {
     return "$latestRates&base=$base";
