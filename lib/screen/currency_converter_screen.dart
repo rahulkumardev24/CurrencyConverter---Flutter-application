@@ -794,7 +794,7 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
 
                 // Recent conversions list (placeholder for future enhancement)
                 if (exchangeRate != null && !isLoading)
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 12),
                 if (exchangeRate != null && !isLoading)
                   const Text(
                     'Tap the swap button to reverse conversion',
