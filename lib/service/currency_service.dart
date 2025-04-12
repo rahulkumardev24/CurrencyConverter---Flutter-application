@@ -11,9 +11,9 @@ class CurrencyService {
   /// 1. Get all latest currency rates by default base or custom base
   Future<CurrencyModel?> fetchCurrency({String? base}) async {
     final url =
-        base == null
-            ? AppConstant.latestRates
-            : AppConstant.getRatesWithBase(base);
+    base == null
+        ? AppConstant.latestRates
+        : AppConstant.getRatesWithBase(base);
 
     try {
       final response = await http.get(Uri.parse(url));

@@ -410,17 +410,14 @@ class _CurrencySymbolScreenState extends State<CurrencySymbolScreen>
                                                         vertical: 4,
                                                       ),
                                                   decoration: BoxDecoration(
-                                                    color:
-                                                        Colors.green.shade50,
+                                                    color: Colors.green.shade50,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                           12,
                                                         ),
                                                     border: Border.all(
                                                       color:
-                                                          Colors
-                                                              .green
-                                                              .shade200,
+                                                          Colors.green.shade200,
                                                       width: 1,
                                                     ),
                                                   ),
@@ -428,9 +425,7 @@ class _CurrencySymbolScreenState extends State<CurrencySymbolScreen>
                                                     currency.status,
                                                     style: myTextStyle12(
                                                       fontColor:
-                                                          Colors
-                                                              .green
-                                                              .shade800,
+                                                          Colors.green.shade800,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                     ),

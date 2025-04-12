@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:currency_converter/utils/custom_text_style.dart';
 import 'package:flutter/material.dart';
@@ -780,7 +779,7 @@ class _HomeScreenState extends State<HomeScreen>
                                       borderSide: BorderSide.none,
                                     ),
                                     filled: true,
-                                    fillColor: Colors.white.withOpacity(0.7),
+                                    fillColor: Colors.white.withAlpha(179),
                                     contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 16,
                                       vertical: 12,

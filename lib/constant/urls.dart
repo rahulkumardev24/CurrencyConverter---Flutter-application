@@ -1,11 +1,11 @@
 class AppConstant {
   static const APIKEY = "d7071495860c42308276a120f637a757";
-  static const CURRENCYCONVERTERAPIKEY = "rSCoN57FlqCCI389W4z28AjBF9SZ8XkJ";
+  static const CURRENCYCONVERTERAPIKEY = "2tuWnlEBizGKdyYKGOD6PzF1Y8SyqlFa";
 
   static String currencyConverterUrl(
-    String baseCurrency,
-    String targetCurrency,
-  ) {
+      String baseCurrency,
+      String targetCurrency,
+      ) {
     return 'https://api.apilayer.com/exchangerates_data/latest?base=$baseCurrency&symbols=$targetCurrency';
   }
 

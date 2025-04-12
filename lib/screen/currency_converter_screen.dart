@@ -1,7 +1,6 @@
 import 'package:currency_converter/constant/colors.dart';
 import 'package:currency_converter/utils/custom_text_style.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../model/currency_converter_model.dart';
 import '../service/currency_service.dart';
@@ -385,7 +384,6 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
       }
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -712,9 +710,7 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
                                         return LinearProgressIndicator(
                                           value: value,
                                           backgroundColor: Colors.grey[200],
-                                          color: AppColors.primary.withOpacity(
-                                            0.5,
-                                          ),
+                                          color: AppColors.primary.withAlpha(128),
                                           minHeight: 2,
                                         );
                                       },
@@ -747,7 +743,7 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
                                   Icon(
                                     Icons.arrow_downward,
                                     size: 24,
-                                    color: AppColors.primary.withOpacity(0.7),
+                                    color: AppColors.primary.withAlpha(179),
                                   ),
 
                                   /// Result Amount with scaling animation
@@ -763,20 +759,24 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
-                                        color: Colors.white24,
+                                        color: Colors.red.shade400,
+                                        borderRadius: BorderRadius.circular(8)
                                       ),
-                                      child: Text(
-                                        '${convertedAmount?.toStringAsFixed(2) ?? "0.00"} $targetCurrency',
-                                        style: myTextStyle24(
-                                          fontWeight: FontWeight.bold,
-                                          fontColor: AppColors.primary,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 12.0,vertical: 2),
+                                        child: Text(
+                                          '${convertedAmount?.toStringAsFixed(2) ?? "0.00"} $targetCurrency',
+                                          style: myTextStyle24(
+                                            fontWeight: FontWeight.bold,
+                                            fontColor: Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
 
-                                  // Last updated time
-                                  const SizedBox(height: 16),
+                                  /// Last updated time
+                                  const SizedBox(height: 6),
                                   Text(
                                     'Updated just now',
                                     style: TextStyle(
@@ -785,6 +785,7 @@ class _HomeScreenState extends State<CurrencyConverterScreen> {
                                       color: Colors.grey[500],
                                     ),
                                   ),
+                                  const SizedBox(height: 2),
                                 ],
                               ),
                             )
