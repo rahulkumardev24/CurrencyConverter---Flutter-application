@@ -2,6 +2,17 @@
 
 A modern and user-friendly Flutter application for real-time currency conversion with beautiful animations and a responsive UI.
 
+## Poster & UI 
+<img src = "https://github.com/rahulkumardev24/CurrencyConverter---Flutter-application/blob/main/ExchnageEdge.png" />
+
+## Screenshort
+<div>
+    <img src = "https://github.com/rahulkumardev24/CurrencyConverter---Flutter-application/blob/main/Screenshot_20250412_175821.png" height = 600 />
+    <img src = "https://github.com/rahulkumardev24/CurrencyConverter---Flutter-application/blob/main/Screenshot_20250412_163758.png" height = 600 />
+    <img src = "https://github.com/rahulkumardev24/CurrencyConverter---Flutter-application/blob/main/Screenshot_20250412_163908.png" height = 600 />
+    <img src = "https://github.com/rahulkumardev24/CurrencyConverter---Flutter-application/blob/main/Screenshot_20250412_175837.png" height = 600 />
+</div>
+
 ## Features
 
 - Real-time currency conversion
